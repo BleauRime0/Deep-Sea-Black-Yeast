@@ -2,6 +2,8 @@
 
 王帜飞，牛潘豪
 
+[TOC]
+
 ###  摘要
 
 ***Hortaea werneckii*** 是一种极端耐盐的黑色酵母，属于灰孢霉目，最近在地中海的不同站点和深度中被分离出来，并证明是优势真菌物种。为了探索这些地中海分离株的基因组特征，我们小组在阅读前人的研究后决定沿用文献中提及的数据，选择合适的生物信息工具软件，在 Linux 系统下以文献中 SRA 数据库的数据为基础，尝试对海洋***H. werneckii*** 菌株进行基因组组装并进一步进行比较基因组学分析，最终与文献得到的结果进行对比分析，总结在复刻实验中存在的不足与需要改进之处。
@@ -64,11 +66,9 @@ Read Length Range: 150 - 150
    fastqc SRR12072898.fastq.gz
    ```
 
-3. FastQC生成`SRR12072898_fastqc.html`和`SRR12072898_fastqc.zip`，分别包含质控结果的详细信息。在浏览器中打开HTML文件查看结果。
+3. FastQC生成`SRR12072898_fastqc.html`和`SRR12072898_fastqc.zip`，分别包含质控结果的详细信息。在浏览器中打开HTML文件查看结果。重复以上步骤对其余2个测序文件进行质检，测序质量均符合要求。
 
    ![](C:\Users\HataYou\Pictures\Saved Pictures\1717476760645.jpg)
-
-重复以上步骤对其余2个测序文件进行质检，测序质量均符合要求。
 
 
 
@@ -215,12 +215,10 @@ Read Length Range: 150 - 150
    java -jar pilon-1.24.jar --genome spades_output/contigs.fasta --frags aligned_sorted.bam --output polished_assembly
       ```
 
-   基因组组装最终得到的结果为`contigs.fasta`文件，截取部分为：
+   基因组组装最终得到的结果为`contigs.fasta`文件，截取部分为如下图。将基因组组装文件命名为`MC743.fna`，用于下游分析。
 
+   ![image-20240604132545661](C:\Users\HataYou\AppData\Roaming\Typora\typora-user-images\image-20240604132545661.png)
 
-![image-20240604132545661](C:\Users\HataYou\AppData\Roaming\Typora\typora-user-images\image-20240604132545661.png)
-
-将基因组组装文件重命名为`MC743.fna`，用于下游分析。
 
 
 
@@ -599,7 +597,7 @@ Read Length Range: 150 - 150
 
 ### 五. 基因注释和翻译
 
-####         ***本板块使用 `gffread`工具得到 CDSs核苷酸序列，并使用 `transeq` 工具将其翻译成蛋白质序列。***
+####         *本板块使用 `gffread`工具得到 CDSs核苷酸序列，并使用 `transeq` 工具将其翻译成蛋白质序列。*
 
 #### 1. 蛋白质编码序列 (CDSs)
 
@@ -657,7 +655,7 @@ Read Length Range: 150 - 150
 
 ### 六. 比较基因组学分析
 
-####         ***本版块使用 OrthoMCL软件进行氨基酸序列的比对与相似性聚类，并使用 MUMmer软件进行两个基因组序列的共线性分析。***
+####         *本版块使用 OrthoMCL软件进行氨基酸序列的比对与相似性聚类，并使用 MUMmer软件进行两个基因组序列的共线性分析。*
 
 #### 1. 同源基因分析
 
@@ -877,7 +875,7 @@ Read Length Range: 150 - 150
 
 ### 七、蛋白质功能注释
 
-#### ***本版块在本地建立 COG数据集，使用 BLAST和 HMMER进行蛋白质功能注释，并比较 MC743和 MC848基因功能的差异。***
+#### *本版块在本地建立 COG数据集，使用 BLAST和 HMMER进行蛋白质功能注释，并比较 MC743和 MC848基因功能的差异。*
 
 #### COG功能分析
 
@@ -943,23 +941,28 @@ Read Length Range: 150 - 150
 
 文章以列表的形式给出了原始测序文件的读长分布和质量得分分布，但是在 NCBI 上发布的 SRA 版本中已经将读长统一修剪为150 bp，质量统一控制成为 30。作者并没有在文章和 BioSample 网页中说明这一点，实则测序数据质控中质量和长度分布的部分可以省略。事实上，经过修建和质控的 SRA 数据有利于我们在有限的算力条件，使用较少的`fastq`组装出质量较高的完整基因组。我们仅使用覆盖度为 45.6x 的 SRR12072898 样本，即可得到全长 51,236,572 bp 的组装，与文章所给的 50,705,820 bp 误差为 0.60%。
 
-在基因组组装过程中，得到了18747个 contigs，这些contigs高度碎片化，可能存在大量错误，特别是在预测总基因数方面。组装工具的参数设置会影响组装结果，推测是过于严格的参数导致更多的小contigs。此外，如果K-mer大小选择不当，也会影响组装的质量。一般来说，较长的K-mer可以更好地处理重复序列，但需要更高的计算资源，由于电脑内存不足选择了较短的K-mer。因此，在组装步骤中，可使用多种工具对原始数据进行质量检查和过滤；调整组装工具的参数，根据数据特点优化K-mer大小等设置；尝试使用不同的组装工具（Velvet、SOAPdenovo等），比较并优化结果。考虑到我们尝试复现论文中的实验方法，可根据论文中的标准，对组装结果进行长度过滤，只保留一定长度以上的contigs。使用去重复工具或算法，减少重复区域对组装的影响。
+在基因组组装过程中，得到了18747个 contigs，这些contigs高度碎片化，可能存在大量错误，特别是在预测总基因数方面。组装工具的参数设置会影响组装结果，推测是过于严格的参数导致更多的小contigs。此外，如果K-mer大小选择不当，也会影响组装的质量。一般来说，较长的K-mer可以更好地处理重复序列，但需要更高的计算资源，由于电脑内存不足选择了较短的K-mer。因此，在组装步骤中，可调整组装工具的参数，根据数据特点优化K-mer大小等设置；尝试使用不同的组装工具（Velvet、SOAPdenovo等），比较并优化结果。考虑到我们尝试复现论文中的实验方法，可根据论文中的标准，对组装结果进行长度过滤，只保留一定长度以上的contigs。使用去重复工具或算法，减少重复区域对组装的影响。
 
 我们在搭建`RepeatMasker`软件和`RepeatModeler`软件的计算环境时，结合经验考虑到 RepeatModeler 依赖众多，选择单独构建虚拟环境，最终的软件包列表几乎没有冗余，在进行基因组组装中也沿用了这一规范。在进行其他步骤时，未充分考虑到不同步骤依赖的交叉范围，导致`pip`软件包过于繁杂，难以辨析不同步骤所需的环境配置，需要在以后的工作流程中加以改进。
 
 重复序列和可移动元件预测结果显示，反转录元件93个，短散在核元件45个，长散在核元件25个，长末端重复序列(LTR) 23个。DNA转座子290个，简单重复序列2238个，低复杂度序列395个。从重复序列和可移动元件的分布来看，MC743 基因组中重复序列占比较低，仅为4.78%。其中，反转录元件和DNA转座子分别占基因组的0.29%和0.78%，简单重复序列和低复杂度序列分别占0.80%和0.15%。基因组中未分类的重复序列占比达2.68% / 1063个，提示存在大量尚未明确分类的重复序列。
 
-通过 MC743 与 MC848 CDSs 的比对，超过99%的基因分配到 10911 个唯一的正交群中，其中 6052个 (55.5%) 包含单拷贝正交基因，而剩下的 4859个 (44.5%) 包含来自同一菌株的至少2个基因。值得注意的是，1047个正交群 (9.6%) 在每个群中包含的基因数量上显示出菌株级别的差异。具体而言，在这1,047个正交群中，528个 (50.4%) 在MC848菌株中富集，497个 (47.5%) 在MC873菌株中富集，而剩下的 22个 (2.1%) 正交群包含菌株特异基因。MC848菌株显示了10个特异正交群，共包含20个基因，而其余12个MC873特异正交群共包含24个基因。共线性分析显示，MC743 与 MC848 基因组在全区段具有显著的的正向互补匹配，这与两者相同物种的亲缘关系相符合。
+研究者通过 MC743 与 MC848 CDSs 的比对，超过99%的基因分配到 10911 个唯一的正交群中，其中 6052个包含单拷贝正交基因，而剩下的 4859个包含来自同一菌株的至少2个基因。值得注意的是，1047个正交群在每个群中包含的基因数量上显示出菌株级别的差异。具体而言，在这1,047个正交群中，528个在MC848菌株中富集，497个在MC873菌株中富集，而剩下的 22个正交群包含菌株特异基因。MC848菌株显示了10个特异正交群，共包含20个基因，而其余12个MC873特异正交群共包含24个基因。我们的共线性分析显示，MC743 与 MC848 基因组在全区段具有显著的的正向互补匹配，这与两者相同物种的亲缘关系相符合。
 
-我们起初采用构建BLAST数据库，将蛋白质序列与COG数据库比对的方法，实际运行中发现本地运行BLAST算法的效率过低，12 h后仅得到约20%的比对结果，且匹配度得分缺少过滤处理。因此，我们选择使用包含隐马尔可夫模型PFAM数据库进行 HMMER 比对，处理速率达到平均 3-4 seq/sec。这种方法的输出文件直观展示了蛋白质的全序列得分、最佳结构域得分和功能描述，便于数据过滤和处理，但是缺点在于 HMMER 功能注释缺少与 GO terms 的25种类型相似的明确分类，因此无法进行后续的 KEGG 代谢通路预测和蛋白质功能类型比对。
+我们起初采用构建BLAST数据库，将蛋白质序列与COG数据库比对的方法，实际运行中发现本地运行BLAST算法的效率过低，12 h后仅得到约20%的比对结果，且匹配度得分缺少过滤。因此，我们选择使用包含隐马尔可夫模型PFAM数据库进行 HMMER 比对，处理速率达到平均 3-4 seq/sec。这种方法的输出文件直观展示了蛋白质的全序列得分、最佳结构域得分和功能描述，便于数据过滤和处理，缺点在于 HMMER 功能注释缺少与 GO terms 的25种类型相似的明确分类，因此无法进行后续的 KEGG 代谢通路预测和蛋白质功能类型比对。
 
-COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB。由于BLAST需要将整个数据库加载到内存中进行比对，如果内存不足就会导致运行效率非常低下。而且，BLAST算法本身是一种复杂的序列比对算法，对计算资源有较高的要求，其时间复杂度与序列长度和数据库大小成正比。当数据库非常大时，比对过程会变得十分耗时。针对这些问题，云计算平台如 AWS、Azure 等提供了强大的计算资源，适合处理大规模的生物信息计算任务。此外，DIAMOND 是一种基于BLAST的序列比对算法，使用了一些优化技术，如基于种子的比对、双向最佳比对等，大幅提高比对效率。因此，在今后的学习中可以融合二者的优点，使用较快速的DIAMOND进行大致的比对，筛选出感兴趣的序列，再使用HMMER进行更细致的比对，兼顾效率和准确性。
+COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB。由于BLAST需要将整个数据库加载到内存中进行比对，如果内存不足就会导致运行效率非常低下。而且，BLAST算法本身是一种复杂的序列比对算法，对计算资源有较高的要求，其时间复杂度与序列长度和数据库大小成正比。当数据库非常大时，比对过程会变得十分耗时。针对这些问题，DIAMOND 是一种基于BLAST的序列比对算法，使用了一些优化技术，如基于种子的比对、双向最佳比对等，大幅提高比对效率。因此，在今后的学习中可以融合二者的优点，使用较快速的DIAMOND进行大致的比对，筛选出感兴趣的序列，再使用HMMER进行更细致的比对，兼顾效率和准确性。
 
+### 参考文献
 
+[1] Romeo O, Marchetta A, Giosa D, et al. Whole genome sequencing and comparative genome analysis of the halotolerant deep sea black yeast *Hortaea werneckii*[J]. Life, 2020, 10(10): 229. [Life | Free Full-Text | Whole Genome Sequencing and Comparative Genome Analysis of the Halotolerant Deep Sea Black Yeast Hortaea werneckii (mdpi.com)](https://www.mdpi.com/2075-1729/10/10/229)
+[2] Shen Q, Chen Y, Jin D, et al. Comparative genome analysis of the oleaginous yeast *Trichosporon fermentans* reveals its potential applications in lipid accumulation[J]. Microbiological research, 2016, 192: 203-210. [Comparative genome analysis of the oleaginous yeast Trichosporon fermentans reveals its potential applications in lipid accumulation - ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0944501316301793)
+[3] Mo X, Zhou M, Li Y, et al. Safety assessment of a novel marine multi-stress-tolerant yeast *Meyerozyma guilliermondii* GXDK6 according to phenotype and whole genome-sequencing analysis[J]. Food Science and Human Wellness, 2024, 13(4): 2048-2059. [Safety assessment of a novel marine multi-stress-tolerant yeast Meyerozyma guilliermondii GXDK6 according to phenotype and whole genome-sequencing analysis - ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2213453024000831)
+[4] Baeza M, Zúñiga S, Peragallo V, et al. Identification of stress-related genes and a comparative analysis of the amino acid compositions of translated coding sequences based on draft genome sequences of Antarctic yeasts[J]. Frontiers in microbiology, 2021, 12: 623171. [Frontiers | Identification of Stress-Related Genes and a Comparative Analysis of the Amino Acid Compositions of Translated Coding Sequences Based on Draft Genome Sequences of Antarctic Yeasts (frontiersin.org)](https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2021.623171/full)
 
 ### 附录
 
-##### 计算环境配置信息
+#### 计算环境配置信息
 
 1. `repeatmasker`环境：用于第3步的重复序列和可移动元件预测。
 
@@ -1129,11 +1132,6 @@ COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB�
    MarkupSafe                        2.1.3
    matplotlib                        3.8.4
    matplotlib-inline                 0.1.6
-   mccabe                            0.7.0
-   mdit-py-plugins                   0.3.0
-   mdurl                             0.1.0
-   menuinst                          2.0.2
-   mistune                           2.0.4
    mkl-fft                           1.3.8
    mkl-random                        1.2.4
    mkl-service                       2.4.0
@@ -1172,9 +1170,6 @@ COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB�
    requests-toolbelt                 1.0.0
    rfc3339-validator                 0.1.4
    rfc3986-validator                 0.1.1
-   rich                              13.3.5
-   rope                              1.12.0
-   rpds-py                           0.10.6
    Rtree                             1.0.1
    ruamel.yaml                       0.17.21
    ruamel-yaml-conda                 0.17.21
@@ -1193,10 +1188,6 @@ COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB�
    sphinxcontrib-serializinghtml     1.1.5
    spyder                            5.4.3
    spyder-kernels                    2.4.4
-   SQLAlchemy                        2.0.25
-   stack-data                        0.2.0
-   statsmodels                       0.14.0
-   streamlit                         1.30.0
    sympy                             1.12
    tables                            3.9.2
    tabulate                          0.9.0
@@ -1210,7 +1201,6 @@ COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB�
    Unidecode                         1.2.0
    urllib3                           2.0.7
    validators                        0.18.2
-   virtualenv                        20.26.1
    wheel                             0.41.2
    widgetsnbextension                3.5.2
    wrapt                             1.14.1
@@ -1304,9 +1294,7 @@ COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB�
    libcblas                  3.9.0           22_linux64_openb
    ```
 
-
-
-##### 项目核心脚本
+#### 项目核心脚本
 
 以下所有脚本和项目报告 Markdown 已发布到 [github个人主页](https://github.com/BleauRime0/Deep-Sea-Black-Yeast)。
 
@@ -1408,5 +1396,3 @@ COG数据库包含了大量的蛋白质序列信息，总文件大小接近1GB�
    
    filter_hmmer_output('MC743_COGs_hmmer.txt', 'MC743_protein_function.tsv')
    ```
-
-   
